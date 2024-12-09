@@ -36,6 +36,9 @@ class PacksManager:
             zip_ref.extractall(work_dir)
 
         # Read the packsquash configuration file
+        #print PWD
+        print(os.getcwd())
+
         config_path = 'config/packsquash.conf'
         with open(config_path, 'r') as config_file:
             config_content = config_file.read()
