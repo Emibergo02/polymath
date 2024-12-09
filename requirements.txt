@@ -2,5 +2,4 @@ cython
 aiohttp
 toml
 colorama>=0.4.5
-zipfile
-subprocess
+zipfile36
