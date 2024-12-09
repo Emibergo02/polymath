@@ -1,3 +1,6 @@
+import subprocess
+import zipfile
+
 from polymath import utils
 import hashlib
 import time
@@ -20,8 +23,31 @@ class PacksManager:
         sha1.update(pack)
         id_hash = sha1.hexdigest()
 
-        with open(os.path.join(self.packs_folder, id_hash), "wb") as pack_file:
+        pack_path = os.path.join(self.packs_folder, id_hash)
+        with open(pack_path, "wb") as pack_file:
             pack_file.write(pack)
+
+        work_dir = os.path.join(self.packs_folder, 'work', id_hash)
+        if not os.path.exists(work_dir):
+            os.mkdir(work_dir)
+
+        # Decompress the pack file into the work directory
+        with zipfile.ZipFile(pack_path, 'r') as zip_ref:
+            zip_ref.extractall(work_dir)
+
+        # Read the packsquash configuration file
+        config_path = 'packsquash/config/packsquash.conf'
+        with open(config_path, 'r') as config_file:
+            config_content = config_file.read()
+
+        # Replace {packfile} with the actual pack path
+        config_content = config_content.replace('{packfile}', work_dir)
+        # Replace {output} with the actual output path
+        config_content = config_content.replace('{output}', pack_path)
+
+        # Execute packsquash command with the modified configuration as standard input
+        process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
+        process.communicate(input=config_content.encode())
 
         self.registry[id_hash] = {
             "id": spigot_id,

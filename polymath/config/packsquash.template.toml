@@ -1,0 +1,6 @@
+pack_directory = "{packfile}"
+output_file_path = "{output}"
+recompress_compressed_files = true
+zip_compression_iterations = 3
+threads = 12
+zip_spec_conformance_level = 'disregard'
