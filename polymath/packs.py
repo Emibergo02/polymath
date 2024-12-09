@@ -47,7 +47,7 @@ class PacksManager:
         config_content = config_content.replace('{packfile}', work_dir)
         # Replace {output} with the actual output path
         config_content = config_content.replace('{output}', pack_path)
-
+        print(config_content)
         # Execute packsquash command with the modified configuration as standard input
         process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
         process.communicate(input=config_content.encode())
