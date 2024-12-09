@@ -27,7 +27,7 @@ class PacksManager:
         with open(pack_path, "wb") as pack_file:
             pack_file.write(pack)
 
-        work_dir = os.path.join(self.packs_folder, 'work', id_hash)
+        work_dir = os.path.join(self.packs_folder, 'work-'+id_hash)
         if not os.path.exists(work_dir):
             os.mkdir(work_dir)
 
