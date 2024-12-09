@@ -39,7 +39,7 @@ class PacksManager:
         #print PWD
         print(os.getcwd())
 
-        config_path = 'config/packsquash.conf'
+        config_path = '/polymath/polymath/config/packsquash.conf'
         with open(config_path, 'r') as config_file:
             config_content = config_file.read()
 
