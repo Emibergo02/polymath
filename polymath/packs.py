@@ -7,6 +7,10 @@ import time
 import os
 
 
+async def packsquash_execution(config_content):
+    process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
+    process.communicate(input=config_content.encode())
+
 class PacksManager:
     def __init__(self, config):
         self.config = config
@@ -44,20 +48,19 @@ class PacksManager:
             config_content = config_file.read()
 
         # Replace {packfile} with the actual pack path
-        config_content = config_content.replace('{packfile}', work_dir)
-        # Replace {output} with the actual output path
-        config_content = config_content.replace('{output}', pack_path)
-        print(config_content)
-        # Execute packsquash command with the modified configuration as standard input
-        process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
-        process.communicate(input=config_content.encode())
+        dir_start_prop = f"""
+        pack_directory = "{work_dir}"
+        output_file_path = "{pack_path}"
+        {config_content}
+        """
+        print(dir_start_prop)
+        packsquash_execution(dir_start_prop)
 
         self.registry[id_hash] = {
             "id": spigot_id,
             "ip": ip,
             "last_download": int(time.time()),
         }
-
         return id_hash
 
     def fetch(self, id_hash):
