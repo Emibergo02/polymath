@@ -10,8 +10,8 @@ import os
 
 
 def packsquash_process(work_dir, pack_path, config_content):
-    parsed_config = (f'pack_directory = "{work_dir}"'
-                     f'output_file_path = "{pack_path}"'
+    parsed_config = (f'pack_directory = "{work_dir}"\n'
+                     f'output_file_path = "{pack_path}"\n'
                      f'{config_content}"')
     process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
     process.communicate(input=parsed_config.encode())
