@@ -14,8 +14,7 @@ def packsquash_process(work_dir, pack_path, config_content):
                      f'output_file_path = "{pack_path}"'
                      f'{config_content}"')
     process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
-    process.stdin.write(parsed_config.encode())
-    process.wait()
+    process.communicate(input=parsed_config.encode())
     logging.info(f"Finished processing pack {pack_path}")
     os.rmdir(work_dir)
 
