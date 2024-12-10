@@ -1,5 +1,7 @@
 import subprocess
+import threading
 import zipfile
+import logging
 
 from polymath import utils
 import hashlib
@@ -7,9 +9,16 @@ import time
 import os
 
 
-async def packsquash_execution(config_content):
+def packsquash_process(work_dir, pack_path, config_content):
+    parsed_config = (f'pack_directory = "{work_dir}"'
+                     f'output_file_path = "{pack_path}"'
+                     f'{config_content}"')
     process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
-    process.communicate(input=config_content.encode())
+    process.stdin.write(parsed_config.encode())
+    process.wait()
+    logging.info(f"Finished processing pack {pack_path}")
+    os.rmdir(work_dir)
+
 
 class PacksManager:
     def __init__(self, config):
@@ -31,7 +40,7 @@ class PacksManager:
         with open(pack_path, "wb") as pack_file:
             pack_file.write(pack)
 
-        work_dir = os.path.join(self.packs_folder, 'work-'+id_hash)
+        work_dir = os.path.join(self.packs_folder, 'work-' + id_hash)
         if not os.path.exists(work_dir):
             os.mkdir(work_dir)
 
@@ -39,22 +48,11 @@ class PacksManager:
         with zipfile.ZipFile(pack_path, 'r') as zip_ref:
             zip_ref.extractall(work_dir)
 
-        # Read the packsquash configuration file
-        #print PWD
-        print(os.getcwd())
-
         config_path = '/polymath/polymath/config/packsquash.toml'
         with open(config_path, 'r') as config_file:
             config_content = config_file.read()
 
-        # Replace {packfile} with the actual pack path
-        dir_start_prop = f"""
-        pack_directory = "{work_dir}"
-        output_file_path = "{pack_path}"
-        {config_content}
-        """
-        print(dir_start_prop)
-        packsquash_execution(dir_start_prop)
+        threading.Thread(target=packsquash_process, args=(work_dir, pack_path, config_content)).start()
 
         self.registry[id_hash] = {
             "id": spigot_id,
