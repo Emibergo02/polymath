@@ -10,9 +10,10 @@ import os
 
 
 def packsquash_process(work_dir, pack_path, config_content):
-    parsed_config = (f'pack_directory = "{work_dir}"\n'
-                     f'output_file_path = "{pack_path}"\n'
-                     f'{config_content}"')
+    parsed_config = (f'pack_directory = "{work_dir}"'
+                     f'output_file_path = "{pack_path}"'
+                     f'{config_content}')
+    print(parsed_config)
     process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
     process.communicate(input=parsed_config.encode())
     logging.info(f"Finished processing pack {pack_path}")
