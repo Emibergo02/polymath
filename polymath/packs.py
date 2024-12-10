@@ -17,7 +17,11 @@ output_file_path = "{pack_path}"
     process = subprocess.Popen(['packsquash'], stdin=subprocess.PIPE)
     process.communicate(input=parsed_config.encode())
     logging.info(f"Finished processing pack {pack_path}")
-    os.rmdir(work_dir)
+    for root, dirs, files in os.walk(work_dir, topdown=False):
+        for name in files:
+            os.remove(os.path.join(root, name))
+        for name in dirs:
+            os.rmdir(os.path.join(root, name))
 
 
 class PacksManager:
